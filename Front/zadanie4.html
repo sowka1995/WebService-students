@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Bartosz Sowa">
+
+    <title>Zadanie 4</title>
+
+    <!-- Dodanie Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+		.container {
+			padding-top: 25px;
+		}
+		
+		#myTable thead th:first-child {
+			width: 20%;
+		}
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Pasek nawigacji -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+			<a class="nav-item nav-link" href="index.html">Zadanie 1</a>
+			<a class="nav-item nav-link" href="zadanie2.html">Zadanie 2</a>
+			<a class="nav-item nav-link" href="zadanie3.html">Zadanie 3</a>
+			<a class="nav-item nav-link active" href="zadanie4.html">Zadanie 4</a>
+			<a class="nav-item nav-link" href="zadanie5.html">Zadanie 5</a>
+		</div>
+	  </div>
+	</nav>
+
+    <!-- Zawartość strony -->
+    <div class="container">
+      <div class="row">
+		<div class="col-12">
+			<a class="btn btn-info float-left" href="zadanie3.html">Poprzednie zadanie</a>
+			<a class="btn btn-info float-right" href="zadanie5.html">Następne zadanie</a>
+		</div>
+	  </div>
+	  
+	  <div class="row justify-content-around mt-4">
+        <div class="col-6">
+			<h1 class="text-center">Zadanie 4</h1>
+			
+			<div class="form-group">
+				<label for="studentIndex">Wpisz numer studenta</label>
+				<input type="text" class="form-control" id="studentIndex" placeholder="Podaj numer studenta (1-100)" maxlength="3"/>
+				<small class="text-danger help-block" id="errorStudent"></small>
+			</div>
+			<button type="button" class="btn btn-dark float-right" id="addButton" disabled="disabled">Pobierz dane</button>
+		</div>
+      </div>
+	  
+	  <div class="row justify-content-around mt-3">
+		<div class="col-6">
+			<table class="table d-none" id="myTable">
+			  <thead>
+				<tr>
+				  <th>Nr</th>
+				  <th>ID</th>
+				  <th>Imię</th>
+				  <th>Nazwisko</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<!-- Tutaj ładowane są wiersze -->
+			  </tbody>
+			</table>
+		</div>
+	  </div>
+	  
+    </div>
+
+    <!-- Import jQuery + Bootstrap Javascript Core -->
+    <script src="jquery/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="script.js"></script>
+
+	<script>
+	$(document).ready(function() {
+		// Indeksowanie dodawanych wierszy
+		var globalIndex = 1;
+		
+		$("#studentIndex").keyup(function() {
+			let inputNumber = this.value;
+			let validationInfo = IsNumberInRange(inputNumber, 1, 100, true);
+			
+			if (validationInfo === "") {
+				EnableElement("addButton");
+				SetFieldValidationInfo("studentIndex", true, validationInfo, "errorStudent");
+			} else {
+				DisableElement("addButton");
+				SetFieldValidationInfo("studentIndex", false, validationInfo, "errorStudent");
+			}
+		});
+		
+		// Dodanie nowego wiersza do tabeli
+		$("#addButton").click(function() {
+			let studentIndex = $("#studentIndex").val().trim();
+			studentIndex = Number(studentIndex);
+			
+			$.ajax({
+                url: `${staticApiUrl}/students/getStudent/${studentIndex}`,
+                type: "GET"
+            }).done(function (response) {
+				let data = [globalIndex++, response.ID,
+							response.FirstName, response.LastName];
+				let newRow = CreateTableRow(data);
+				$("#myTable tbody").append(newRow);
+				$("#myTable").removeClass("d-none"); // odkrycie tabeli po załadowaniu
+            }).fail(HandleError);
+		});
+		
+	}); // koniec $(document).ready()
+	
+	</script>
+  </body>
+
+</html>

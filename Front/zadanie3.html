@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Bartosz Sowa">
+
+    <title>Zadanie 3</title>
+
+    <!-- Dodanie Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+		.container {
+			padding-top: 25px;
+		}
+		
+		#myTable thead th:first-child {
+			width: 20%;
+		}
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Pasek nawigacji -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+			<a class="nav-item nav-link" href="index.html">Zadanie 1</a>
+			<a class="nav-item nav-link" href="zadanie2.html">Zadanie 2</a>
+			<a class="nav-item nav-link active" href="zadanie3.html">Zadanie 3</a>
+			<a class="nav-item nav-link" href="zadanie4.html">Zadanie 4</a>
+			<a class="nav-item nav-link" href="zadanie5.html">Zadanie 5</a>
+		</div>
+	  </div>
+	</nav>
+
+    <!-- Zawartość strony -->
+    <div class="container">
+      <div class="row">
+		<div class="col-12">
+			<a class="btn btn-info float-left" href="zadanie2.html">Poprzednie zadanie</a>
+			<a class="btn btn-info float-right" href="zadanie4.html">Następne zadanie</a>
+		</div>
+	  </div>
+	  
+	  <div class="row justify-content-around mt-4">
+        <div class="col-6">
+			<h1 class="text-center">Zadanie 3</h1>
+			
+			<div class="form-group">
+				<label for="field">Wpisz liczbę</label>
+				<input type="text" class="form-control" id="field" placeholder="Wpisz dowolną liczbę"/>
+				<small class="text-danger help-block" id="errorField"></small>		
+			</div>
+			<button type="button" class="btn btn-dark float-right" id="addButton" disabled="disabled">Prześlij liczbę</button>
+		</div>
+      </div>
+	  
+	  <div class="row justify-content-around mt-3">
+		<div class="col-6">
+			<table class="table d-none" id="myTable">
+			  <thead>
+				<tr>
+				  <th>Nr</th>
+				  <th>Twoja liczba</th>
+				  <th>Liczba pomnożona razy 2</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<!-- Tutaj ładowane są wiersze -->
+			  </tbody>
+			</table>
+		</div>
+	  </div>
+	  
+    </div>
+
+    <!-- Import jQuery + Bootstrap Javascript Core -->
+    <script src="jquery/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="script.js"></script>
+
+	<script>
+	$(document).ready(function() {
+		// Indeksowanie dodawanych wierszy
+		var globalIndex = 1;
+		var INT32_MIN = 2147483648 * -1;
+		var INT32_MAX = 2147483647;
+		
+		$("#field").keyup(function() {	
+			let inputNumber = this.value;
+			let validationInfo = IsNumberInRange(inputNumber, INT32_MIN, INT32_MAX, false);
+			
+			if (validationInfo === "") {
+				EnableElement("addButton");
+				SetFieldValidationInfo("field", true, validationInfo, "errorField");
+			} else {
+				DisableElement("addButton");
+				SetFieldValidationInfo("field", false, validationInfo, "errorField");
+			}
+		});
+		
+		// Dodanie nowego wiersza do tabeli
+		$("#addButton").click(function() {
+			let inputValue = $("#field").val().trim();
+			inputValue = Number(inputValue);
+			
+			$.ajax({
+                url: `${staticApiUrl}/simple/getData/${inputValue}/`,
+                type: "GET"
+            }).done(function (response) {
+				let data = [globalIndex++, inputValue, response];
+				let newRow = CreateTableRow(data);
+				$("#myTable tbody").append(newRow);
+				$("#myTable").removeClass("d-none"); // odkrycie tabeli po załadowaniu
+            }).fail(HandleError);
+		});
+	
+	}); // koniec $(document).ready()
+	
+	
+	</script>
+  </body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Bartosz Sowa">
+
+    <title>Zadanie 1</title>
+
+    <!-- Dodanie Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+		.container {
+			padding-top: 25px;
+		}
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Pasek nawigacji -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+			<a class="nav-item nav-link active" href="index.html">Zadanie 1</a>
+			<a class="nav-item nav-link" href="zadanie2.html">Zadanie 2</a>
+			<a class="nav-item nav-link" href="zadanie3.html">Zadanie 3</a>
+			<a class="nav-item nav-link" href="zadanie4.html">Zadanie 4</a>
+			<a class="nav-item nav-link" href="zadanie5.html">Zadanie 5</a>
+		</div>
+	  </div>
+	</nav>
+
+    <!-- Zawartość strony -->
+    <div class="container">
+	
+      <div class="row">
+		<div class="col-12">
+			<a class="btn btn-info float-right" href="zadanie2.html">Następne zadanie</a>
+		</div>
+	  </div>
+	  
+	  <div class="row justify-content-around mt-4">
+        <div class="col-6">
+			<h1 class="text-center">Zadanie 1</h1>
+			<div class="form-group">
+				<label for="field">Wpisz tekst</label>
+				<input type="text" class="form-control" id="field" placeholder="Wpisz dowolny tekst" maxlength="100"/>	
+				<small class="text-danger help-block" id="errorField"></small>				
+			</div>
+			<button type="button" class="btn btn-dark float-right" id="alertButton" disabled="disabled">Wyświetl tekst</button>
+        </div>
+      </div>
+	  
+    </div>
+
+    <!-- Import jQuery + Bootstrap Javascript Core -->
+    <script src="jquery/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="script.js"></script>
+	
+	<script>
+	$(document).ready(function() {
+		
+		// Zdarzenie obsługujące pole tekstowe
+		// jeśli pole tekstowe jest puste to przycisk disabled
+		$("#field").keyup(function() {	
+			let validationInfo = ValidTextField("field");
+			
+			if (validationInfo === "") {
+				EnableElement("alertButton");
+				SetFieldValidationInfo("field", true, validationInfo, "errorField");
+			} else {
+				DisableElement("alertButton");
+				SetFieldValidationInfo("field", false, validationInfo, "errorField");
+			}
+		});
+		
+		// Obsługa kliknięcia w przycisk
+		$("#alertButton").click(function() {
+			let inputText = $("#field").val();
+			alert(inputText);
+		});
+		
+	}); // koniec $(document).ready()
+	</script>
+  </body>
+
+</html>
